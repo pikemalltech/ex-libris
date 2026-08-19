@@ -1,4 +1,4 @@
-# Bookshelf
+# Ex Libris
 
 A personal reading catalogue — a small, private-ish alternative to Goodreads.
 
