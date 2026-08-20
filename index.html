@@ -2,124 +2,149 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ex Libris">
+<meta name="theme-color" content="#8a4b2a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <title>Ex Libris</title>
 <style>
 :root{
   --bg:#faf8f5; --panel:#fff; --ink:#1e1b18; --muted:#6b635a; --line:#e5ded4;
   --accent:#8a4b2a; --accent-soft:#f0e4da; --star:#c8892f; --shadow:0 1px 3px rgba(0,0,0,.08);
+  --danger:#a3352b;
 }
 @media (prefers-color-scheme:dark){
   :root{
     --bg:#16140f; --panel:#211d18; --ink:#ece6dd; --muted:#a49a8c; --line:#332c24;
     --accent:#d9915f; --accent-soft:#2e2419; --star:#e0a944; --shadow:0 1px 3px rgba(0,0,0,.4);
+    --danger:#e0796c;
   }
 }
 *{box-sizing:border-box}
-body{
-  margin:0; background:var(--bg); color:var(--ink);
-  font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
 
 header{border-bottom:1px solid var(--line);background:var(--panel)}
-.head-in{display:flex;flex-wrap:wrap;align-items:baseline;gap:14px;padding:22px 0 18px}
+.head-in{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;padding:20px 0 16px}
 h1{font:600 25px/1.1 Georgia,"Iowan Old Style",serif;margin:0;letter-spacing:-.01em}
 .sub{color:var(--muted);font-size:14px}
 .sub b{color:var(--ink);font-weight:600}
+.head-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+#status{font-size:13px;color:var(--muted)}
+button{font:inherit}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--muted);
+  padding:6px 13px;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:500}
+.btn:hover{color:var(--ink)}
+.btn.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.danger{color:var(--danger);border-color:var(--line)}
 
 .controls{position:sticky;top:0;z-index:20;background:var(--bg);
   border-bottom:1px solid var(--line);padding:12px 0}
 .controls-in{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .shelves{display:flex;gap:4px;flex-wrap:wrap}
-.shelf{
-  border:1px solid var(--line);background:var(--panel);color:var(--muted);
-  padding:6px 13px;border-radius:20px;cursor:pointer;font-size:13.5px;font-weight:500;
-}
+.shelf{border:1px solid var(--line);background:var(--panel);color:var(--muted);
+  padding:6px 13px;border-radius:20px;cursor:pointer;font-size:13.5px;font-weight:500}
 .shelf:hover{color:var(--ink)}
 .shelf[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
 .shelf .n{opacity:.65;margin-left:5px;font-variant-numeric:tabular-nums}
-input[type=search],select{
+input[type=search],input[type=text],input[type=date],select{
   font:inherit;font-size:14px;padding:7px 11px;border:1px solid var(--line);
-  border-radius:8px;background:var(--panel);color:var(--ink);
-}
+  border-radius:8px;background:var(--panel);color:var(--ink)}
 input[type=search]{flex:1;min-width:200px}
-input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px}
 .count{color:var(--muted);font-size:13px;margin-left:auto;font-variant-numeric:tabular-nums}
 
-.grid{
-  display:grid;gap:26px 20px;padding:26px 0 60px;
-  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-}
+.grid{display:grid;gap:26px 20px;padding:26px 0 60px;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
 .card{cursor:pointer;border:0;background:none;padding:0;text-align:left;color:inherit;font:inherit}
-.cover{
-  position:relative;aspect-ratio:2/3;border-radius:4px;overflow:hidden;
-  background:var(--accent-soft);box-shadow:var(--shadow);
-}
-/* The placeholder is absolutely positioned, so a static img would paint *behind* it.
+.cover{position:relative;aspect-ratio:2/3;border-radius:4px;overflow:hidden;
+  background:var(--accent-soft);box-shadow:var(--shadow);transition:transform .15s ease}
+/* The placeholder is absolutely positioned, so a static img would paint behind it.
    Lift the real cover above it; the placeholder stays as the fallback underneath. */
 .cover img{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
-.ph{
-  position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+.ph{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
   padding:12px;font:600 12.5px/1.35 Georgia,serif;color:#fff;
-  background:linear-gradient(160deg,var(--c1),var(--c2));
-}
+  background:linear-gradient(160deg,var(--c1),var(--c2))}
 .ph span{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 .card:hover .cover{transform:translateY(-2px)}
-.cover{transition:transform .15s ease}
 .card h3{font-weight:600;font-size:13.5px;line-height:1.3;margin:9px 0 2px;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .card p{margin:0;color:var(--muted);font-size:12.5px;
   display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
 .stars{color:var(--star);font-size:12px;letter-spacing:1px;margin-top:3px}
-.badge{
-  position:absolute;top:7px;right:7px;background:rgba(0,0,0,.72);color:#fff;
-  font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;letter-spacing:.03em;
-}
-.empty{padding:70px 0;text-align:center;color:var(--muted)}
+.badge{position:absolute;top:7px;right:7px;z-index:2;background:rgba(0,0,0,.72);color:#fff;
+  font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;letter-spacing:.03em}
+.empty{padding:50px 0;text-align:center;color:var(--muted)}
 
-dialog{
-  border:0;border-radius:12px;padding:0;max-width:540px;width:calc(100% - 32px);
-  background:var(--panel);color:var(--ink);box-shadow:0 12px 40px rgba(0,0,0,.3);
-}
+dialog{border:0;border-radius:12px;padding:0;max-width:560px;width:calc(100% - 32px);
+  background:var(--panel);color:var(--ink);box-shadow:0 12px 40px rgba(0,0,0,.3)}
 dialog::backdrop{background:rgba(0,0,0,.5)}
 .d-in{display:flex;gap:20px;padding:24px}
 .d-cover{width:118px;flex:none}
-.d-cover .cover{aspect-ratio:2/3}
+.d-body{min-width:0;flex:1}
 .d-body h2{font:600 20px/1.25 Georgia,serif;margin:0 0 3px}
 .d-body .by{color:var(--muted);margin:0 0 12px;font-size:14px}
 dl{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;margin:0;font-size:13.5px}
 dt{color:var(--muted)}
-dd{margin:0}
+dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.ro-extra{margin-top:10px}
 .close{position:absolute;top:10px;right:12px;border:0;background:none;color:var(--muted);
   font-size:24px;line-height:1;cursor:pointer;padding:4px 8px;border-radius:6px}
 .close:hover{background:var(--accent-soft);color:var(--ink)}
 
+.edit{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);
+  display:grid;gap:9px;font-size:13.5px}
+.edit label{display:grid;grid-template-columns:74px 1fr;align-items:center;
+  gap:10px;color:var(--muted)}
+.edit .row{display:flex;gap:8px;margin-top:6px}
+.rate{display:flex;gap:2px;align-items:center}
+.rate button{border:0;background:none;cursor:pointer;font-size:19px;color:var(--line);padding:0 1px}
+.rate button.on{color:var(--star)}
+.rate .clear{font-size:13px;color:var(--muted);margin-left:6px}
+
+#add .add-in{padding:22px}
+#add h2{font:600 18px/1.2 Georgia,serif;margin:0 0 12px}
+.add-row{display:flex;gap:8px;margin-bottom:12px}
+.add-row input{flex:1}
+#add-results{display:grid;gap:6px;max-height:52vh;overflow:auto}
+.res{display:flex;gap:11px;align-items:center;text-align:left;width:100%;
+  border:1px solid var(--line);background:var(--panel);color:inherit;
+  border-radius:8px;padding:8px 10px;cursor:pointer;font-size:13.5px}
+.res:hover{border-color:var(--accent);background:var(--accent-soft)}
+.res-cover{width:34px;height:50px;flex:none;background:var(--accent-soft);
+  border-radius:3px;overflow:hidden}
+.res-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.res small{color:var(--muted)}
+
 .stats{border-bottom:1px solid var(--line);background:var(--panel)}
-.stats summary{
-  cursor:pointer;padding:11px 20px;font-size:13px;font-weight:600;color:var(--muted);
-  max-width:1180px;margin:0 auto;list-style:none;user-select:none;
-}
+.stats summary{cursor:pointer;padding:11px 20px;font-size:13px;font-weight:600;
+  color:var(--muted);max-width:1180px;margin:0 auto;list-style:none;user-select:none}
 .stats summary::-webkit-details-marker{display:none}
 .stats summary::before{content:"▸ ";display:inline-block;transition:transform .15s}
 .stats[open] summary::before{transform:rotate(90deg)}
 .stats summary:hover{color:var(--ink)}
-.stats-in{display:grid;grid-template-columns:1fr 1fr;gap:34px;padding:4px 20px 26px}
+.stats-in{display:grid;grid-template-columns:1fr 1fr;gap:34px;padding:4px 20px 26px;
+  max-width:1180px;margin:0 auto}
 .stats h2{font-weight:600;font-size:12px;line-height:1;margin:0 0 13px;letter-spacing:.06em;
   text-transform:uppercase;color:var(--muted)}
 .note{color:var(--muted);font-size:12.5px;margin:12px 0 0;max-width:38em}
 .bars{display:grid;gap:7px}
-@media (max-width:700px){.stats-in{grid-template-columns:1fr;gap:26px}}
 .bar{display:grid;grid-template-columns:150px 1fr 40px;gap:10px;align-items:center;font-size:13px}
 .bar .t{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar .track{display:block;background:var(--accent-soft);border-radius:3px;height:9px;overflow:hidden}
 .bar .fill{display:block;background:var(--accent);height:100%;border-radius:3px;min-width:2px}
 .bar .v{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
 footer{color:var(--muted);font-size:12.5px;padding:0 0 40px}
+@media (max-width:700px){.stats-in{grid-template-columns:1fr;gap:26px}}
 @media (max-width:560px){
   .grid{grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:20px 14px}
   .d-in{flex-direction:column}.d-cover{width:96px}
+  .edit label{grid-template-columns:70px 1fr}
 }
 </style>
 </head>
@@ -128,6 +153,11 @@ footer{color:var(--muted);font-size:12.5px;padding:0 0 40px}
 <header><div class="wrap head-in">
   <h1>Ex&nbsp;Libris</h1>
   <div class="sub" id="tagline">loading…</div>
+  <div class="head-actions">
+    <span id="status" role="status" aria-live="polite"></span>
+    <button class="btn" id="addbtn" hidden>+ Add book</button>
+    <button class="btn" id="authbtn">Edit</button>
+  </div>
 </div></header>
 
 <div class="controls"><div class="wrap controls-in">
@@ -145,7 +175,7 @@ footer{color:var(--muted);font-size:12.5px;padding:0 0 40px}
 </div></div>
 
 <details class="stats"><summary>Library at a glance</summary>
-  <div class="wrap stats-in">
+  <div class="stats-in">
     <div><h2>By subject</h2><div class="bars" id="themebars"></div></div>
     <div><h2>Ratings</h2><div class="bars" id="ratebars"></div>
       <p class="note" id="ratenote"></p></div>
@@ -154,154 +184,32 @@ footer{color:var(--muted);font-size:12.5px;padding:0 0 40px}
 
 <main class="wrap"><div class="grid" id="grid"></div><div id="sentinel"></div></main>
 
-<dialog id="dlg"><button class="close" aria-label="Close">&times;</button><div class="d-in" id="dlg-in"></div></dialog>
+<dialog id="dlg"><button class="close" aria-label="Close">&times;</button>
+  <div class="d-in" id="dlg-in"></div></dialog>
+
+<dialog id="add"><button class="close" aria-label="Close">&times;</button>
+  <div class="add-in">
+    <h2>Add a book</h2>
+    <div class="add-row">
+      <input type="text" id="add-q" placeholder="Title, author, ISBN…" autocomplete="off">
+      <button class="btn primary" id="add-go">Search</button>
+    </div>
+    <div class="add-row">
+      <select id="add-shelf">
+        <option value="wishlist">Want to read</option>
+        <option value="owned" selected>Owned</option>
+        <option value="reading">Reading</option>
+        <option value="read">Read</option>
+      </select>
+    </div>
+    <div id="add-results"></div>
+  </div>
+</dialog>
 
 <footer><div class="wrap">
   <span id="gen"></span> · Built from a personal Obsidian library. Cover art from Open Library.
 </div></footer>
 
-<script>
-const $ = s => document.querySelector(s);
-const STAR = '★★★★★';
-const SHELVES = [
-  ['all','Everything'], ['read','Read'], ['owned','Owned'],
-  ['unread','To read'], ['wishlist','Wishlist']
-];
-let DATA = {books:[]}, shelf = 'all', shown = 0, view = [];
-const PAGE = 60;
-
-const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const hue = s => { let h=0; for (const ch of s) h=(h*31+ch.charCodeAt(0))%360; return h; };
-
-function placeholder(b){
-  const h = hue(b.title);
-  return `<div class="ph" style="--c1:hsl(${h} 34% 42%);--c2:hsl(${(h+38)%360} 30% 27%)">
-            <span>${esc(b.title)}</span></div>`;
-}
-function coverHTML(b){
-  const ph = placeholder(b);
-  if(!b.isbn) return ph;
-  return ph + `<img loading="lazy" alt="" src="https://covers.openlibrary.org/b/isbn/${esc(b.isbn)}-M.jpg?default=false"
-                onerror="this.remove()">`;
-}
-function stars(r){ return r ? `<div class="stars">${STAR.slice(0,r)}</div>` : ''; }
-
-function card(b, i){
-  const badge = b.status==='read' ? 'READ' : b.status==='wishlist' ? 'WANT' : '';
-  return `<button class="card" data-i="${i}">
-    <div class="cover">${coverHTML(b)}${badge?`<span class="badge">${badge}</span>`:''}</div>
-    <h3>${esc(b.title)}</h3>
-    <p>${esc(b.author||'—')}</p>${stars(b.rating)}
-  </button>`;
-}
-
-function matches(b, q){
-  if(shelf!=='all' && (b.status||'owned')!==shelf) return false;
-  const t = $('#theme').value;
-  if(t && b.theme!==t) return false;
-  if(!q) return true;
-  return (b.title+' '+(b.subtitle||'')+' '+(b.author||'')+' '+(b.series||'')).toLowerCase().includes(q);
-}
-
-function sortBooks(list){
-  const s = $('#sort').value;
-  const last = b => (b.author||'zzz').split(' ').pop().toLowerCase();
-  const cmp = {
-    author: (a,b) => last(a).localeCompare(last(b)) || a.title.localeCompare(b.title),
-    title:  (a,b) => a.title.localeCompare(b.title),
-    year:   (a,b) => (+b.year||0)-(+a.year||0) || a.title.localeCompare(b.title),
-    rating: (a,b) => (b.rating||0)-(a.rating||0) || a.title.localeCompare(b.title),
-    read:   (a,b) => String(b.date_read||'').localeCompare(String(a.date_read||'')) || a.title.localeCompare(b.title),
-  }[s];
-  return list.sort(cmp);
-}
-
-function render(reset=true){
-  if(reset){
-    const q = $('#q').value.trim().toLowerCase();
-    view = sortBooks(DATA.books.filter(b => matches(b,q)));
-    shown = 0; $('#grid').innerHTML = '';
-    $('#count').textContent = `${view.length} ${view.length===1?'book':'books'}`;
-    if(!view.length){ $('#grid').innerHTML = '<p class="empty">Nothing on this shelf matches.</p>'; return; }
-  }
-  const slice = view.slice(shown, shown+PAGE);
-  $('#grid').insertAdjacentHTML('beforeend', slice.map((b)=>card(b, DATA.books.indexOf(b))).join(''));
-  shown += slice.length;
-}
-
-function detail(b){
-  const rows = [
-    ['Author', b.author], ['Series', b.series ? b.series + (b.series_index?` · book ${b.series_index}`:'') : ''],
-    ['Published', [b.publisher, b.year].filter(Boolean).join(', ')],
-    ['Pages', b.pages], ['Format', [b.format, ...(b.editions||[])].filter(Boolean).join(' · ')],
-    ['Subject', b.theme], ['Shelf', {read:'Read',owned:'Owned',wishlist:'Wishlist',unread:'To read'}[b.status||'owned']],
-    ['Rating', b.rating ? STAR.slice(0,b.rating) : ''],
-    ['Started', b.date_started], ['Finished', b.date_read], ['ISBN', b.isbn],
-  ].filter(r => r[1]);
-  $('#dlg-in').innerHTML = `
-    <div class="d-cover"><div class="cover">${coverHTML(b)}</div></div>
-    <div class="d-body">
-      <h2>${esc(b.title)}</h2>
-      ${b.subtitle?`<p class="by"><em>${esc(b.subtitle)}</em></p>`:''}
-      <dl>${rows.map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
-    </div>`;
-  $('#dlg').showModal();
-}
-
-fetch('books.json').then(r=>r.json()).then(d=>{
-  DATA = d;
-  const c = d.counts;
-  $('#tagline').innerHTML =
-    `<b>${c.total}</b> books · <b>${c.read||0}</b> read · <b>${c.owned||0}</b> owned · <b>${c.wishlist||0}</b> wanted`;
-  $('#gen').textContent = 'Updated ' + d.generated;
-
-  $('#shelves').innerHTML = SHELVES
-    .filter(([k]) => k==='all' || c[k])
-    .map(([k,label]) =>
-      `<button class="shelf" data-s="${k}" aria-pressed="${k==='all'}">${label}<span class="n">${k==='all'?c.total:c[k]}</span></button>`).join('');
-
-  $('#theme').insertAdjacentHTML('beforeend',
-    Object.keys(d.themes).map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join(''));
-
-  const bar = (label,n,max) =>
-    `<div class="bar"><span class="t">${label}</span>
-       <span class="track"><span class="fill" style="width:${max?n/max*100:0}%"></span></span>
-       <span class="v">${n}</span></div>`;
-
-  const tmax = Math.max(...Object.values(d.themes));
-  $('#themebars').innerHTML = Object.entries(d.themes)
-    .map(([t,n]) => bar(esc(t), n, tmax)).join('');
-
-  const rated = d.books.filter(b=>b.rating);
-  const dist = [5,4,3,2,1].map(r => [r, rated.filter(b=>b.rating===r).length]);
-  const rmax = Math.max(1, ...dist.map(x=>x[1]));
-  $('#ratebars').innerHTML = dist.map(([r,n]) => bar(STAR.slice(0,r), n, rmax)).join('');
-  const avg = rated.length ? (rated.reduce((s,b)=>s+b.rating,0)/rated.length).toFixed(2) : '—';
-  $('#ratenote').textContent =
-    `${rated.length} of ${c.total} books are rated (average ${avg}). Most of the library carries no rating — ` +
-    `that means it was never recorded, not that the book went unread.`;
-
-  render();
-});
-
-$('#shelves').addEventListener('click', e=>{
-  const b = e.target.closest('.shelf'); if(!b) return;
-  shelf = b.dataset.s;
-  [...$('#shelves').children].forEach(x=>x.setAttribute('aria-pressed', x===b));
-  render();
-});
-$('#grid').addEventListener('click', e=>{
-  const c = e.target.closest('.card'); if(c) detail(DATA.books[+c.dataset.i]);
-});
-$('.close').addEventListener('click', ()=>$('#dlg').close());
-$('#dlg').addEventListener('click', e=>{ if(e.target===$('#dlg')) $('#dlg').close(); });
-let t; $('#q').addEventListener('input', ()=>{ clearTimeout(t); t=setTimeout(()=>render(),120); });
-$('#theme').addEventListener('change', ()=>render());
-$('#sort').addEventListener('change', ()=>render());
-
-new IntersectionObserver(es=>{
-  if(es[0].isIntersecting && shown < view.length) render(false);
-}, {rootMargin:'600px'}).observe($('#sentinel'));
-</script>
+<script src="app.js"></script>
 </body>
 </html>
